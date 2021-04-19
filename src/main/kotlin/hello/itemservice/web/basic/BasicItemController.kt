@@ -37,9 +37,8 @@ class BasicItemController(
     }
 
     @PostMapping("/add")
-    fun addItem(item: Item, model: Model): String {
-        val saved = itemRepository.save(item)
-        model.addAttribute("item", saved)
+    fun addItem(item: Item): String {
+        itemRepository.save(item)
         return "basic/item"
     }
 
