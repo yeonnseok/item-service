@@ -27,7 +27,8 @@ internal class ItemRepositoryTest {
 
         assertThat(findItem.id).isEqualTo(1)
         assertThat(findItem.itemName).isEqualTo("itemA")
-        assertThat(findItem.price).isEqualTo(10)
+        assertThat(findItem.price).isEqualTo(10000)
+        assertThat(findItem.quantity).isEqualTo(10)
     }
 
     @Test
@@ -50,5 +51,28 @@ internal class ItemRepositoryTest {
 
         assertThat(result.size).isEqualTo(2)
         assertThat(result).contains(item1, item2)
+    }
+
+    @Test
+    fun update() {
+        val item = Item(
+            itemName = "itemA",
+            price = 10000,
+            quantity = 10
+        )
+        val savedItem = itemRepository.save(item)
+
+        val updateParam = Item(
+            itemName = "updatedA",
+            price = 15000,
+            quantity = 15
+        )
+
+        itemRepository.update(savedItem.id, updateParam)
+
+        val findItem = itemRepository.findById(savedItem.id)
+        assertThat(findItem.itemName).isEqualTo("updatedA")
+        assertThat(findItem.price).isEqualTo(15000)
+        assertThat(findItem.quantity).isEqualTo(15)
     }
 }
