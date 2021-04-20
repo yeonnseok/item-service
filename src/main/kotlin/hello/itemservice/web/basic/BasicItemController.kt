@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Controller
 import org.springframework.ui.Model
 import org.springframework.web.bind.annotation.*
+import org.springframework.web.servlet.mvc.support.RedirectAttributes
 import javax.annotation.PostConstruct
 
 @Controller
@@ -37,9 +38,24 @@ class BasicItemController(
     }
 
     @PostMapping("/add")
-    fun addItem(item: Item): String {
-        itemRepository.save(item)
-        return "basic/item"
+    fun addItem(item: Item, redirectAttributes: RedirectAttributes): String {
+        val saved = itemRepository.save(item)
+        redirectAttributes.addAttribute("itemId", saved.id)
+        redirectAttributes.addAttribute("status", true)
+        return "redirect:/basic/items/{itemId}"
+    }
+
+    @GetMapping("/{itemId}/edit")
+    fun editForm(@PathVariable itemId: Long, model: Model): String {
+        val item = itemRepository.findById(itemId)
+        model.addAttribute("item", item)
+        return "basic/editForm"
+    }
+
+    @PostMapping("/{itemId}/edit")
+    fun updateItem(@PathVariable itemId: Long, updateParam: Item): String {
+        itemRepository.update(itemId, updateParam)
+        return "redirect:/basic/items/{itemId}"
     }
 
     @PostConstruct
